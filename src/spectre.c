@@ -109,7 +109,8 @@ void readMemoryByte(size_t malicious_x, uint8_t value[2], int score[2]) {
 int main(int argc, const char ** argv) {
     size_t malicious_x =
         (size_t) (secret - (char *) array1); /* default for malicious_x */
-    int i, score[2], len = 40;
+    long unsigned int i;
+    int score[2], len = 40;
     uint8_t value[2];
 
     for (i = 0; i < sizeof(array2); i++) {
