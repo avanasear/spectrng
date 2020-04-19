@@ -151,6 +151,7 @@ int main(int argc, const char ** argv) {
     }
 
     char possible_secret[41] = {0};
+    printf("Reading %d bytes:\n", len);
     while (--len >= 0) {
         readMemoryByte(malicious_x++, value, score);
         possible_secret[39-len] = value[0];
