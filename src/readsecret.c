@@ -21,7 +21,7 @@ int read_secret(char * output, int len) {
                 }
             }
             printf("%d", x);
-            usleep(1949000);
+            usleep(1949500);
             a = (a | x);
             a = (a << 1);
         }
