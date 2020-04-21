@@ -121,15 +121,18 @@ void rng_send(char * msg) {
         for (j = 0; j < 8; j++) {
             // do the rdseed or don't
             if (((msg[i] & x) >> (7 - j)) == 1) {
-                for (k = 0; k < 8740000; k++) {
+                printf("1");
+                for (k = 0; k < 16000000; k++) {
                     ret = _rdseed64_step(&p);
                 }
             }
             else {
-                usleep(1000000);
+                printf("0");
+                usleep(2000000);
             }
             x /= 2;
         }
+        printf("\n");
     }
 }
 

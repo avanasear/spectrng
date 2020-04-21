@@ -20,11 +20,13 @@ int read_secret(char * output, int len) {
                     x = 1;
                 }
             }
-            usleep(1000000);
+            printf("%d", x);
+            usleep(1949000);
             a = (a | x);
             a = (a << 1);
         }
         output[i] = a;
+        printf("\n");
     }
     return 0;
 }
