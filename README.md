@@ -4,4 +4,4 @@
 
 Run `make` to compile both binaries: `spectrng` and `readsecret`
 
-To run the PoC, run `spectrng` in one terminal, and `readsecret` in another terminal immediately after `spectrng` prints out 'The Magic Words are Squeamish Ossifrage.' If `spectrng` prints anything else, or fails to pring anything and exits, just run it again. Shit happens.
+To run the PoC, run `spectrng` in one terminal, and `readsecret` in another terminal immediately after `spectrng` prints out 'The Magic Words are Squeamish Ossifrage.' If `spectrng` prints anything else, or fails to print anything and exits, just run it again. Shit happens.
