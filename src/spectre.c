@@ -147,6 +147,10 @@ void rng_send(char * msg) {
 }
 
 int main(int argc, const char ** argv) {
+    /* Basically, we want to create an empty buffer that's the same size
+    that we can write our results to. From there, we read the actual bytes 
+    of the secret and add them to the buffer we made. */  
+    
     size_t malicious_x =
         (size_t) (secret - (char *) array1); /* default for malicious_x */
     long unsigned int i;
@@ -165,6 +169,7 @@ int main(int argc, const char ** argv) {
     char possible_secret[41] = {0};
     printf("Reading %d bytes:\n", len);
     while (--len >= 0) {
+        /* This is primarily where we produced the function's description */
         readMemoryByte(malicious_x++, value, score);
         possible_secret[39-len] = value[0];
     }
