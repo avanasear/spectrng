@@ -4,6 +4,7 @@
 #include <string.h>
 #include <immintrin.h> // for rdseed
 #include <unistd.h> // for usleep
+#include <time.h> // for timekeeping
 #ifdef _MSC_VER
 #include <intrin.h> /* for rdtscp and clflush */
 #pragma optimize("gt", on)
@@ -115,20 +116,29 @@ void rng_send(char * msg) {
     int i, j, k, ret;
     int x;
     unsigned long long p;
+    struct timespec tp;
 
     for (i = 0; i < len; i++) {
         x = 0x80;
         for (j = 0; j < 8; j++) {
             // do the rdseed or don't
-            if (((msg[i] & x) >> (7 - j)) == 1) {
-                printf("1");
-                for (k = 0; k < 16000000; k++) {
-                    ret = _rdseed64_step(&p);
+            while (0 < 1) {
+                clock_gettime(CLOCK_REALTIME, &tp);
+                if (tp.tv_sec % 2 == 0) {
+                    if (((msg[i] & x) >> (7 - j)) == 1) {
+                        printf("1");
+                        for (k = 0; k < 100000; k++) {
+                            ret = _rdseed64_step(&p);
+                        }
+                        sleep(1);
+                        break;
+                    }
+                    else {
+                        printf("0");
+                        sleep(1);
+                        break;
+                    }
                 }
-            }
-            else {
-                printf("0");
-                usleep(2000000);
             }
             x /= 2;
         }
