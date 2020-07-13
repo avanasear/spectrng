@@ -27,7 +27,6 @@ int main() {
 }
 
 int write_pid(char * path) {
-    printf('in write_pid\n')
     pid_t recv_pid = getpid();
     //similar to 'send', we read the temp file belonging to 'recv'
     FILE * pidfile = fopen(path, "wb");
@@ -51,7 +50,6 @@ void read_from_conditioner() {
                 x = 1;
             }
         }
-        print("eyup\n")
         printf("%d", x);
         a |= x;
         if (j < 7) {
