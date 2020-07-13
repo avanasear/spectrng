@@ -58,7 +58,7 @@ void read_from_conditioner() {
         usleep(10);
         break;
     }
-    printf("\n%c\n", a);
+    printf("\n", a);
 }
 
 void abort_process() {
