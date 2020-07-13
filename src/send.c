@@ -9,7 +9,7 @@ pid_t recvpid;
 int get_recv_pid(char * path);
 void rng_send_char(char ltr);
 
-""" retrieves the PID from the get_recv_pid function """
+// retrieves the PID from the get_recv_pid function
 int main() {
     // known .recv.pid
     char * pidpath = "/tmp/.recv.pid";
@@ -33,21 +33,22 @@ int get_recv_pid(char * path) {
     return receiver;
 }
 
-""" sends the specified letter to the terminal in binary form """
+// sends the specified letter to the terminal in binary form
 void rng_send_char(char ltr) {
 
     int i, ret = 0;
     int x = 0x80;
     unsigned long long p;
-    """ 
+    /*
         According to GNU.org SIGUSR1 is set aside for users to use in
-        any way they want. 
+        any way they want.
         This allows communication between './recv' and './send' processes
-    """
-    kill(recvpid, SIGUSR1);
+    */
 
-""" 7/13/2020 removed the always true statement of while(1) """
+
+// 7/13/2020 removed the always true statement of while(1)
     for (i = 0; i < 8; i++) {
+        kill(recvpid, SIGUSR1);
         if (((ltr & x) >> (7 - i)) == 1) {
             printf("1");
             ret = _rdseed64_step(&p);
