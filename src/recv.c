@@ -6,12 +6,16 @@
 
 int stopno = 0;
 
+char byte = 0;
+int iter = 0;
+
 int write_pid(char * path);
 void read_from_conditioner();
+void read_from_conditioner_new();
 void abort_process();
 
 int main() {
-    signal(SIGUSR1, read_from_conditioner);
+    signal(SIGUSR1, read_from_conditioner_new);
     signal(SIGINT, abort_process);
 
     char * pidpath = "/tmp/.recv.pid";
@@ -60,6 +64,27 @@ void read_from_conditioner() {
         }
     }
     printf("\n%c\n", a);
+}
+
+void read_from_conditioner_new() {
+    unsigned long long p = 0;
+    int i = 0;
+    int x = 0;
+
+    for (i = 0; i < 10; i++) {
+        if (_rdseed64_step(&p) == 0) {
+            x = 1;
+        }
+    }
+    printf("%d", x);
+    byte |= x;
+    byte = (byte << 1);
+    iter++;
+    if (iter == 7) {
+        printf("\n%c\n", byte);
+        iter = 0;
+        byte = 0;
+    }
 }
 
 void abort_process() {
