@@ -34,9 +34,8 @@ void rng_send_char(char ltr) {
     int x = 0x80;
     unsigned long long p;
 
-    kill(recvpid, SIGUSR1);
-
     for (i = 0; i < 8; i++) {
+    kill(recvpid, SIGUSR1);
         while (1) {
             if (((ltr & x) >> (7 - i)) == 1) {
                 printf("1");
