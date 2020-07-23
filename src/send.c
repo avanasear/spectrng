@@ -35,19 +35,15 @@ void rng_send_char(char ltr) {
     unsigned long long p;
 
     for (i = 0; i < 8; i++) {
-    kill(recvpid, SIGUSR1);
-        while (1) {
-            if (((ltr & x) >> (7 - i)) == 1) {
-                printf("1");
-                ret = _rdseed64_step(&p);
-                usleep(150);
-                break;
-            }
-            else {
-                printf("0");
-                usleep(300);
-                break;
-            }
+        kill(recvpid, SIGUSR1);
+        if (((ltr & x) >> (7 - i)) == 1) {
+            printf("1");
+            ret = _rdseed64_step(&p);
+            usleep(150);
+        }
+        else {
+            printf("0");
+            usleep(300);
         }
         x /= 2;
     }

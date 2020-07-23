@@ -74,6 +74,7 @@ void read_from_conditioner_new() {
     for (i = 0; i < 10; i++) {
         if (_rdseed64_step(&p) == 0) {
             x = 1;
+            break;
         }
     }
     printf("%d", x);
