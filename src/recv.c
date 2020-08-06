@@ -2,28 +2,33 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
+#include <pthread.h>
 #include <immintrin.h>
 
 int stopno = 0;
 
-char byte = 0;
-int iter = 0;
-
 int write_pid(char * path);
 void read_from_conditioner();
-void read_from_conditioner_new();
 void abort_process();
+void * read_thread(void * param);
 
 int main() {
+    pthread_t thread0;
+
     signal(SIGUSR1, read_from_conditioner);
     signal(SIGINT, abort_process);
 
     char * pidpath = "/tmp/.recv.pid";
     write_pid(pidpath);
 
+    pthread_create(&thread0, NULL, read_thread, NULL);
+    pthread_join(thread0, NULL);
+
     pause();
 
     remove(pidpath);
+
+    stopno++;
 
     return(0);
 }
@@ -54,3 +59,14 @@ void abort_process() {
     exit(0);
 }
 
+void * read_thread(){
+    int ret;
+    unsigned long long p;
+
+    while (stopno == 0) {
+        ret = _rdseed64_step(&p);
+        usleep(200);
+    }
+
+    pthread_exit(0);
+}
