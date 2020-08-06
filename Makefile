@@ -5,7 +5,7 @@ all: src/spectre.c src/readsecret.c src/send.c src/recv.c
 	$(CC) src/spectre.c -o spectrng -mrdrnd -lrt -march=native
 	$(CC) src/readsecret.c -o readsecret -mrdrnd -march=native
 	$(CC) src/send.c -o send -mrdrnd -lrt -march=native
-	$(CC) src/recv.c -o recv -mrdrnd -lrt -march=native
+	$(CC) src/recv.c -o recv -mrdrnd -lrt -march=native -pthread
 
 clean: spectrng readsecret
 	rm spectrng
