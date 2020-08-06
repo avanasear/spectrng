@@ -56,7 +56,7 @@ void read_from_conditioner() {
 
 void abort_process() {
     printf("\nTerminating.\n");
-    exit(0);
+    exit(1);
 }
 
 void * read_thread(){
@@ -64,7 +64,7 @@ void * read_thread(){
     unsigned long long p;
 
     while (stopno == 0) {
-        ret = _rdseed64_step(&p);
+        //ret = _rdseed64_step(&p);
         usleep(10000);
     }
 
