@@ -44,10 +44,11 @@ int write_pid(char * path) {
 }
 
 void read_from_conditioner() {
+    int x = 0;
     int ret = 0;
     unsigned long long p = 0;
 
-    while (1) {
+    for (x=0; x<8; x++) {
         ret = _rdseed64_step(&p);
         printf("%d\n", ret);
         usleep(250);
