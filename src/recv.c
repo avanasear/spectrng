@@ -23,7 +23,6 @@ int main() {
     write_pid(pidpath);
 
     pthread_create(&thread0, NULL, read_thread, NULL);
-    pthread_join(thread0, NULL);
 
     for (x=0; x<8; x++) {
         pause();
@@ -32,6 +31,7 @@ int main() {
     remove(pidpath);
 
     stopno++;
+    pthread_join(thread0, NULL);
 
     return(0);
 }
@@ -64,8 +64,8 @@ void * read_thread(){
     unsigned long long p;
 
     while (stopno == 0) {
-        //ret = _rdseed64_step(&p);
-        usleep(10000);
+        ret = _rdseed64_step(&p);
+        usleep(10);
     }
 
     pthread_exit(0);
