@@ -13,6 +13,7 @@ void abort_process();
 void * read_thread();
 
 int main() {
+    int x = 0;
     pthread_t thread0;
 
     signal(SIGUSR1, read_from_conditioner);
@@ -24,7 +25,9 @@ int main() {
     pthread_create(&thread0, NULL, read_thread, NULL);
     pthread_join(thread0, NULL);
 
-    pause();
+    for (x=0; x<8; x++) {
+        pause();
+    }
 
     remove(pidpath);
 
@@ -44,15 +47,11 @@ int write_pid(char * path) {
 }
 
 void read_from_conditioner() {
-    int x = 0;
     int ret = 0;
     unsigned long long p = 0;
 
-    for (x=0; x<8; x++) {
-        ret = _rdseed64_step(&p);
-        printf("%d\n", ret);
-        usleep(250);
-    }
+    ret = _rdseed64_step(&p);
+    printf("%d\n", ret);
 }
 
 void abort_process() {
@@ -66,7 +65,7 @@ void * read_thread(){
 
     while (stopno == 0) {
         ret = _rdseed64_step(&p);
-        usleep(200);
+        usleep(350);
     }
 
     pthread_exit(0);
