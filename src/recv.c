@@ -11,10 +11,11 @@ int write_pid(char * path);
 void read_from_conditioner();
 void abort_process();
 void * read_thread();
+void * pause_thread();
 
 int main() {
-    int x = 0;
     pthread_t thread0;
+    pthread_t thread1;
 
     signal(SIGUSR1, read_from_conditioner);
     signal(SIGINT, abort_process);
@@ -23,15 +24,11 @@ int main() {
     write_pid(pidpath);
 
     pthread_create(&thread0, NULL, read_thread, NULL);
-
-    for (x=0; x<8; x++) {
-        pause();
-    }
+    pthread_create(&thread1, NULL, pause_thread, NULL);
+    pthread_join(thread0, NULL);
 
     remove(pidpath);
 
-    stopno++;
-    pthread_join(thread0, NULL);
 
     return(0);
 }
@@ -59,7 +56,7 @@ void abort_process() {
     exit(1);
 }
 
-void * read_thread(){
+void * read_thread() {
     int ret;
     unsigned long long p;
 
@@ -68,5 +65,14 @@ void * read_thread(){
         usleep(10);
     }
 
+    pthread_exit(0);
+}
+
+void * pause_thread() {
+    while (1) {
+        pause();
+    }
+
+    stopno++;
     pthread_exit(0);
 }
