@@ -39,10 +39,11 @@ void rng_send_char(char ltr) {
         if (((ltr & x) >> (7 - i)) == 1) {
             printf("1");
             ret = _rdseed64_step(&p);
+            usleep(1000);
         }
         else {
             printf("0");
-            usleep(1000);
+            usleep(1250);
         }
         x /= 2;
     }
