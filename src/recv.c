@@ -10,7 +10,7 @@ int stopno = 0;
 int write_pid(char * path);
 void read_from_conditioner();
 void abort_process();
-void * read_thread(void * param);
+void * read_thread();
 
 int main() {
     pthread_t thread0;
