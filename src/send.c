@@ -42,7 +42,7 @@ void rng_send_char(char ltr) {
         }
         else {
             printf("0");
-            usleep(150);
+            usleep(1000);
         }
         x /= 2;
     }
