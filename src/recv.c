@@ -65,7 +65,7 @@ void * read_thread(){
 
     while (stopno == 0) {
         ret = _rdseed64_step(&p);
-        usleep(350);
+        usleep(600);
     }
 
     pthread_exit(0);
