@@ -6,29 +6,35 @@
 #include <immintrin.h>
 
 int stopno = 0;
+char * pidpath = "/tmp/.recv.pid";
 
 int write_pid(char * path);
 void read_from_conditioner();
 void abort_process();
 void * read_thread();
-void * pause_thread();
 
 int main() {
-    pthread_t threads[2];
+    pthread_t threads[16];
 
     signal(SIGUSR1, read_from_conditioner);
     signal(SIGINT, abort_process);
 
-    char * pidpath = "/tmp/.recv.pid";
     write_pid(pidpath);
 
-    pthread_create(&threads[0], NULL, read_thread, NULL);
-    pthread_create(&threads[1], NULL, pause_thread, NULL);
-    pthread_join(threads[0], NULL);
-    pthread_join(threads[1], NULL);
+    for (int i = 0; i < 16; i++) {
+        pthread_create(&threads[i], NULL, read_thread, NULL);
+    }
+
+    for (int i = 0; i < 8; i++) {
+        pause();
+    }
+    stopno++;
+
+    for (int i = 0; i < 16; i++) {
+        pthread_join(threads[i], NULL);
+    }
 
     remove(pidpath);
-
 
     return(0);
 }
@@ -53,6 +59,10 @@ void read_from_conditioner() {
 
 void abort_process() {
     printf("\nTerminating.\n");
+    stopno++;
+
+    remove(pidpath);
+
     exit(1);
 }
 
@@ -60,17 +70,11 @@ void * read_thread() {
     int ret;
     unsigned long long p;
 
+    printf("%d\n", stopno);
+
     while (stopno == 0) {
         ret = _rdseed64_step(&p);
-        usleep(100);
     }
 
-    pthread_exit(0);
-}
-
-void * pause_thread() {
-    pause();
-
-    stopno++;
     pthread_exit(0);
 }
