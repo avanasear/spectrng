@@ -25,7 +25,7 @@ int main() {
 
     pthread_create(&thread0, NULL, read_thread, NULL);
     pthread_create(&thread1, NULL, pause_thread, NULL);
-    pthread_join(thread0, NULL);
+    pthread_join(thread1, NULL);
 
     remove(pidpath);
 
@@ -69,9 +69,9 @@ void * read_thread() {
 }
 
 void * pause_thread() {
-    while (1) {
-        pause();
-    }
+    int x;
+
+    pause();
 
     stopno++;
     pthread_exit(0);
