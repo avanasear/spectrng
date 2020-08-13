@@ -14,14 +14,15 @@ void abort_process();
 void * read_thread();
 
 int main() {
-    pthread_t threads[16];
+    int thread_ct = 16;
+    pthread_t threads[thread_ct];
 
     signal(SIGUSR1, read_from_conditioner);
     signal(SIGINT, abort_process);
 
     write_pid(pidpath);
 
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < thread_ct; i++) {
         pthread_create(&threads[i], NULL, read_thread, NULL);
     }
 
@@ -30,7 +31,7 @@ int main() {
     }
     stopno++;
 
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < thread_ct; i++) {
         pthread_join(threads[i], NULL);
     }
 
@@ -70,10 +71,9 @@ void * read_thread() {
     int ret;
     unsigned long long p;
 
-    printf("%d\n", stopno);
-
     while (stopno == 0) {
         ret = _rdseed64_step(&p);
+        usleep(1);
     }
 
     pthread_exit(0);
