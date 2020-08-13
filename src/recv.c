@@ -14,7 +14,7 @@ void abort_process();
 void * read_thread();
 
 int main() {
-    int thread_ct = 16;
+    int thread_ct = 1;
     pthread_t threads[thread_ct];
 
     signal(SIGUSR1, read_from_conditioner);
@@ -73,7 +73,13 @@ void * read_thread() {
 
     while (stopno == 0) {
         ret = _rdseed64_step(&p);
-        usleep(1);
+        ret = _rdseed64_step(&p);
+        ret = _rdseed64_step(&p);
+        ret = _rdseed64_step(&p);
+        ret = _rdseed64_step(&p);
+        ret = _rdseed64_step(&p);
+        ret = _rdseed64_step(&p);
+        ret = _rdseed64_step(&p);
     }
 
     pthread_exit(0);
