@@ -14,8 +14,7 @@ void * read_thread();
 void * pause_thread();
 
 int main() {
-    pthread_t thread0;
-    pthread_t thread1;
+    pthread_t threads[2];
 
     signal(SIGUSR1, read_from_conditioner);
     signal(SIGINT, abort_process);
@@ -23,9 +22,10 @@ int main() {
     char * pidpath = "/tmp/.recv.pid";
     write_pid(pidpath);
 
-    pthread_create(&thread0, NULL, read_thread, NULL);
-    pthread_create(&thread1, NULL, pause_thread, NULL);
-    pthread_join(thread1, NULL);
+    pthread_create(&threads[0], NULL, read_thread, NULL);
+    pthread_create(&threads[1], NULL, pause_thread, NULL);
+    pthread_join(threads[0], NULL);
+    pthread_join(threads[1], NULL);
 
     remove(pidpath);
 
@@ -62,15 +62,13 @@ void * read_thread() {
 
     while (stopno == 0) {
         ret = _rdseed64_step(&p);
-        usleep(10);
+        usleep(100);
     }
 
     pthread_exit(0);
 }
 
 void * pause_thread() {
-    int x;
-
     pause();
 
     stopno++;
