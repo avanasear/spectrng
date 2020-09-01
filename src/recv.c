@@ -26,10 +26,10 @@ int main() {
         pthread_create(&threads[i], NULL, read_thread, NULL);
     }
 
-    for (int i = 0; i < 8; i++) {
+    /*for (int i = 0; i < 8; i++) {
         pause();
-    }
-    stopno++;
+    }*/
+    //stopno++;
 
     for (int i = 0; i < thread_ct; i++) {
         pthread_join(threads[i], NULL);
@@ -69,17 +69,78 @@ void abort_process() {
 
 void * read_thread() {
     int ret;
-    unsigned long long p;
+    //unsigned long long p;
 
     while (stopno == 0) {
-        ret = _rdseed64_step(&p);
-        ret = _rdseed64_step(&p);
-        ret = _rdseed64_step(&p);
-        ret = _rdseed64_step(&p);
-        ret = _rdseed64_step(&p);
-        ret = _rdseed64_step(&p);
-        ret = _rdseed64_step(&p);
-        ret = _rdseed64_step(&p);
+        asm volatile(
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;"
+            "rdseed %%rax;" : "=r" (ret)
+        );
+        if (ret == 0){
+            printf("fail\n");
+        }
     }
 
     pthread_exit(0);

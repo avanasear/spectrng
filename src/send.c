@@ -29,7 +29,6 @@ int get_recv_pid(char * path) {
 }
 
 void rng_send_char(char ltr) {
-
     int i, ret = 0;
     int x = 0x80;
     unsigned long long p;
