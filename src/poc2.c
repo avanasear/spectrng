@@ -7,6 +7,7 @@ int main(void)
     int i, j = 0;
     int ret;
 
+    printf("run 1 starting...\n");
     for (i = 0; i < 99; i++) {
         j = 0;
         asm volatile(
@@ -23,6 +24,7 @@ int main(void)
         }
         sleep(2);
     }
+    printf("run 2 starting...\n");
     for (i = 0; i < 99; i++) {
         j = 0;
         asm volatile(
@@ -40,6 +42,7 @@ int main(void)
         }
         sleep(2);
     }
+    printf("run 3 starting...\n");
     for (i = 0; i < 99; i++) {
         j = 0;
         asm volatile(
@@ -58,6 +61,7 @@ int main(void)
         }
         sleep(2);
     }
+    printf("run 4 starting...\n");
     for (i = 0; i < 99; i++) {
         j = 0;
         asm volatile(
@@ -77,6 +81,7 @@ int main(void)
         }
         sleep(2);
     }
+    printf("run 5 starting...\n");
     for (i = 0; i < 99; i++) {
         j = 0;
         asm volatile(
